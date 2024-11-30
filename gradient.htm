@@ -1,0 +1,123 @@
+<HTML>
+  <HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=x-cp1250">
+    <META NAME="author" CONTENT="Jan Mleczko">
+    <TITLE>Gradient w JavaScript</TITLE>
+  </HEAD>
+  <BODY>
+    <H1>Gradient</H1>
+    <CANVAS ID="obraz" WIDTH="500" HEIGHT="100"></CANVAS>
+    <BR><BR>
+    <FORM NAME="danegr">
+      <TABLE>
+        <TR>
+          <TH COLSPAN="2">Barwa z lewej</TH>
+          <TD ROWSPAN="4" WIDTH="50"></TD>
+          <TH COLSPAN="2">Barwa z prawej</TH>
+        </TR><TR>
+          <TD>R:</TD>
+          <TD><INPUT TYPE="text" NAME="czer1"></TD>
+          <TD>R:</TD>
+          <TD><INPUT TYPE="text" NAME="czer2"></TD>
+        </TR><TR>
+          <TD>G:</TD>
+          <TD><INPUT TYPE="text" NAME="ziel1"></TD>
+          <TD>G:</TD>
+          <TD><INPUT TYPE="text" NAME="ziel2"></TD>
+        </TR><TR>
+          <TD>B:</TD>
+          <TD><INPUT TYPE="text" NAME="nieb1"></TD>
+          <TD>B:</TD>
+          <TD><INPUT TYPE="text" NAME="nieb2"></TD>
+        </TR>
+      </TABLE>
+      <INPUT TYPE="submit" VALUE="Utwórz gradient">
+      <INPUT TYPE="button" NAME="zamien" VALUE="Zamieñ stronami">
+    </FORM>
+    <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+      var ROZCIAG = 500;
+      var WYS = 100;
+      
+      var grafika = document.getElementById ("obraz");
+      grafika = grafika.getContext ("2d");      
+      var fdane = document.forms.danegr;
+      
+      function zabkanal (wart) {
+        wart = parseInt (wart);
+        if (wart < 0)
+          return 0;
+        if (wart > 255)
+          return 255;
+        return wart;
+      }
+      
+      function oblkrok (lw, pr) {
+        return (pr - lw) / ROZCIAG;
+      }
+      
+      function skszesn (skladowa) {
+        skladowa = Math.floor (skladowa).toString (16);
+        if (skladowa.length < 2)
+          skladowa = "0" + skladowa;
+        return skladowa;
+      }
+      
+      function zatwierdz () {
+        var czlewy, czprawy, czkrok;
+        var zllewy, zlprawy, zlkrok;
+        var nblewy, nbprawy, nbkrok;
+        var i, szesn;
+        
+        czlewy = zabkanal (fdane.czer1.value);
+        czprawy = zabkanal (fdane.czer2.value);
+        czkrok = oblkrok (czlewy, czprawy);
+        
+        zllewy = zabkanal (fdane.ziel1.value);
+        zlprawy = zabkanal (fdane.ziel2.value);
+        zlkrok = oblkrok (zllewy, zlprawy);
+        
+        nblewy = zabkanal (fdane.nieb1.value);
+        nbprawy = zabkanal (fdane.nieb2.value);
+        nbkrok = oblkrok (nblewy, nbprawy);
+        
+        i = 0;
+        while (i < ROZCIAG) {
+          szesn = "#";
+          szesn += skszesn (czlewy);
+          szesn += skszesn (zllewy);
+          szesn += skszesn (nblewy);
+          grafika.fillStyle = szesn;
+          grafika.fillRect (i, 0, 1, WYS);
+          ++i;
+          czlewy += czkrok;
+          zllewy += zlkrok;
+          nblewy += nbkrok;
+        }
+        
+        return false;
+      }
+      
+      function zamienstr () {
+        var tymczas;
+        
+        tymczas = fdane.czer1.value;
+        fdane.czer1.value = fdane.czer2.value;
+        fdane.czer2.value = tymczas;
+        tymczas = fdane.ziel1.value;
+        fdane.ziel1.value = fdane.ziel2.value;
+        fdane.ziel2.value = tymczas;
+        tymczas = fdane.nieb1.value;
+        fdane.nieb1.value = fdane.nieb2.value;
+        fdane.nieb2.value = tymczas;
+        zatwierdz ();
+      }
+
+      fdane.czer1.value = fdane.ziel1.value = fdane.nieb1.value = "0";
+      fdane.czer2.value = fdane.ziel2.value = fdane.nieb2.value = "255";
+      zatwierdz ();
+      fdane.onsubmit = zatwierdz;
+      fdane.zamien.onclick = zamienstr;
+    </SCRIPT>
+  </BODY>
+</HTML>
+
